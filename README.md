@@ -1,2 +1,2 @@
-# MICRO-CAT
-Microbial Classification and AMR Typing
+# WWSCAN
+Microbial Classification
