@@ -52,3 +52,12 @@ WWSCAN/
 ├── environment.yml # Python dependencies  
 ├── setup.py # Package installation script  
 └── README.md # Main project documentation  
+
+## TODO:
+- [x] Remove Ray library  
+- [ ] Perform benchmarks on prepare.py  
+- [ ] Get at least twice the speedup on the maximum number of threads  
+- [ ] Transform project to desired structure
+- [ ] prepare.py
+    - [ ] Remove config logic  
+    - [ ] Turn on using multithreading preprocessing 
