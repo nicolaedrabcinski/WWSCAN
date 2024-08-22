@@ -4,18 +4,18 @@ This document provides an overview of the directory structure for the WWSCAN pro
 
 ## Directory Layout
 
-WWSCAN/
-├── data/ # Data for training and testing
-│ ├── raw/ # Raw data files (e.g., fasta files)
-│ │ ├── virus.fasta
-│ │ ├── plant.fasta
-│ │ └── bacteria.fasta
-│ ├── processed/ # Processed data for models
-│ │ ├── encoded_train_500.hdf5
-│ │ ├── encoded_train_1000.hdf5
-│ │ ├── seqs_virus_sampled_500_20000.fasta
-│ │ ├── seqs_plant_sampled_500_20000.fasta
-│ │ └── seqs_bacteria_sampled_500_20000.fasta
+WWSCAN/  
+├── data/ # Data for training and testing  
+│ ├── raw/ # Raw data files (e.g., fasta files)  
+│ │ ├── virus.fasta  
+│ │ ├── plant.fasta  
+│ │ └── bacteria.fasta  
+│ ├── processed/ # Processed data for models  
+│ │ ├── encoded_train_500.hdf5  
+│ │ ├── encoded_train_1000.hdf5  
+│ │ ├── seqs_virus_sampled_500_20000.fasta  
+│ │ ├── seqs_plant_sampled_500_20000.fasta  
+│ │ └── seqs_bacteria_sampled_500_20000.fasta  
 │ └── README.md # Data description
 │
 ├── src/ # Source code of the project
