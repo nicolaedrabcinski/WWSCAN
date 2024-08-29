@@ -2,7 +2,7 @@ import numpy as np
 from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
-# import ray
+
 import os
 import pathlib
 import math
@@ -13,51 +13,89 @@ import h5py
 
 def reverse_complement(fragment):
     """
-    provides reverse complement to sequences
-    Input:
-    sequences - list with SeqRecord sequences in fasta format
-    Output:
-    complementary_sequences -
-    list with SeqRecord complementary sequences in fasta format
+    Provides reverse complement to sequences.
     """
-    # complementary_sequences = []
-    # for sequence in sequences:
-    #     complementary_sequence = SeqRecord(
-    #         seq=Seq(sequence.seq).reverse_complement(),
-    #         id=sequence.id + "_reverse_complement",
-    #     )
-    #     complementary_sequences.append(complementary_sequence)
     fragment = fragment[::-1].translate(str.maketrans('ACGT', 'TGCA'))
+    
     return fragment
 
 def introduce_mutations(seqs, mut_rate, rs=None):
     """
-    Function that mutates sequences in the entering fasta file
-    A proportion of nucleotides are changed to other nucleotide
-    Not yet taking account of mutation for gaps
-    mut_rate - proportion from 0.0 to 1.0, float
+    Function that mutates sequences in the entering fasta file.
     """
-    random.seed(a=rs)
+    random.seed(a = rs)
     assert 0.0 <= mut_rate <= 1.0
     mutated_seqs = []
+
     for seq in seqs:
         mut_seq = list(str(seq.seq))
         l_ = len(mut_seq)
         mutated_sites_i = random.sample(range(l_), int(mut_rate * l_))
+
         for mut_site_i in mutated_sites_i:
             mut_site = mut_seq[mut_site_i]
             mutations = ["A", "C", "T", "G"]
+            
             if mut_site in mutations:
                 mutations.remove(mut_site)
                 mut_seq[mut_site_i] = random.sample(mutations, 1)[0]
+
         mutated_seq = SeqRecord(
-            seq=Seq("".join(mut_seq)),
-            id=seq.id + f"mut_{mut_rate}",
-            name="",
-            description="",
+            seq = Seq("".join(mut_seq)),
+            id = seq.id + f"mut_{mut_rate}",
+            name = "",
+            description = "",
         )
         mutated_seqs.append(mutated_seq)
     return mutated_seqs
+
+def introduce_mutations_opt(seqs, mut_rate, rs=None):
+    """
+    Function that mutates sequences in the entering fasta file, optimized for speed.
+    """
+
+    np.random.seed(rs)
+    assert 0.0 <= mut_rate <= 1.0
+    mutated_seqs = []
+
+    # Choices for each nucleotide
+    mutation_dict = {
+        'A': np.array(['C', 'T', 'G']),
+        'C': np.array(['A', 'T', 'G']),
+        'T': np.array(['A', 'C', 'G']),
+        'G': np.array(['A', 'C', 'T']),
+    }
+
+    for seq in seqs:
+        mut_seq = np.array(list(str(seq.seq))) # NumPy array
+        l_ = len(mut_seq)
+        num_mutations = int(mut_rate * l_)
+
+        if num_mutations > 0:
+            # Random select
+            mutated_sites_i = np.random.choice(l_, num_mutations, replace=True)
+
+            for mut_site_i in mutated_sites_i:
+                mut_size = mut_seq[mut_site_i]
+
+                if mut_site in mutation_dict:
+                    # Random select new
+                    mut_seq[mut_site_i] = np.random.choice(mutation_dict[mut_site])
+        
+        mutated_seq = SeqRecord(
+            seq = Seq(''.join(mut_seq)), # Join back
+            id = seq.id + f"mut_{mut_rate}",
+            name = "",
+            description = "",
+        )
+
+        mutated_seqs.append(mutated_seq)
+
+    return mutated_seqs
+
+
+
+
 
 def separate_by_length(length_, seq_list, fold=None,):
     # TODO: add docs
